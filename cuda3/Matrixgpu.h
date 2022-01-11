@@ -24,8 +24,7 @@ __global__ void transposeKernel(float* A, float* y, int width, int height) {
     int i_row = blockIdx.y * BLOCK_SIZE + threadIdx.y;
 
     // Load matrix into tile
-    int i;
-    for (i = 0; i < BLOCK_SIZE; i += BLOCK_SIZE) {
+    for (int i = 0; i < BLOCK_SIZE; i += BLOCK_SIZE) {
         if (i_column < width && (i_row + i) < height) {
             tile[threadIdx.y + i][threadIdx.x] = A[(i_row + i) * width + i_column];
         }
@@ -234,7 +233,7 @@ public:
             dimGrid.x = (this->columns + dimBlock.x - 1) / dimBlock.x;
             dimGrid.y = (this->rows + dimBlock.y - 1) / dimBlock.y;
             dimGrid.z = 1;
-            addKernel << <dimGrid, dimBlock >> > (this->dev_matrix, x.dev_matrix, y.dev_matrix, this->rows, this->columns);
+            addKernel <<<dimGrid, dimBlock >>> (this->dev_matrix, x.dev_matrix, y.dev_matrix, this->rows, this->columns);
 
             cudaError_t error = cudaGetLastError();
             if (error != cudaSuccess) {
@@ -261,7 +260,7 @@ public:
             dimGrid.x = (this->columns + dimBlock.x - 1) / dimBlock.x;
             dimGrid.y = (this->rows + dimBlock.y - 1) / dimBlock.y;
             dimGrid.z = 1;
-            substractKernel << <dimGrid, dimBlock >> > (this->dev_matrix, x.dev_matrix, y.dev_matrix, this->rows, this->columns);
+            substractKernel <<<dimGrid, dimBlock >>> (this->dev_matrix, x.dev_matrix, y.dev_matrix, this->rows, this->columns);
 
             cudaError_t error = cudaGetLastError();
             if (error != cudaSuccess) {
@@ -286,7 +285,7 @@ public:
         dim3 dimGrid;
         dimGrid.x = (this->columns + dimBlock.x - 1) / dimBlock.x;
         dimGrid.y = (this->rows + dimBlock.y - 1) / dimBlock.y;
-        multipyscalarKernel << <dimGrid, dimBlock >> > (this->dev_matrix, x, y.dev_matrix, this->rows, this->columns);
+        multipyscalarKernel <<<dimGrid, dimBlock >>> (this->dev_matrix, x, y.dev_matrix, this->rows, this->columns);
 
         cudaError_t error = cudaGetLastError();
         if (error != cudaSuccess) {
@@ -307,7 +306,7 @@ public:
             dim3 dimGrid;
             dimGrid.x = (X.columns + BLOCK_SIZE - 1) / BLOCK_SIZE;
             dimGrid.y = (this->rows + BLOCK_SIZE - 1) / BLOCK_SIZE;
-            multiplymatrixKernel << <dimGrid, dimBlock >> > (this->dev_matrix, X.dev_matrix, y.dev_matrix, y.rows, y.columns, this->columns);
+            multiplymatrixKernel <<<dimGrid, dimBlock >>> (this->dev_matrix, X.dev_matrix, y.dev_matrix, y.rows, y.columns, this->columns);
 
             cudaError_t error = cudaGetLastError();
             if (error != cudaSuccess) {
@@ -332,7 +331,7 @@ public:
             dim3 dimGrid;
             dimGrid.x = (this->columns + dimBlock.x - 1) / dimBlock.x;
             dimGrid.y = (this->rows + dimBlock.y - 1) / dimBlock.y;
-            hadamardKernel << <dimGrid, dimBlock >> > (this->dev_matrix, X.dev_matrix, y.dev_matrix, this->rows, this->columns);
+            hadamardKernel <<<dimGrid, dimBlock >>> (this->dev_matrix, X.dev_matrix, y.dev_matrix, this->rows, this->columns);
 
             cudaError_t error = cudaGetLastError();
             if (error != cudaSuccess) {
@@ -356,7 +355,7 @@ public:
         dimGrid.x = (this->columns + dimBlock.x - 1) / dimBlock.x;
         dimGrid.y = (this->rows + dimBlock.y - 1) / dimBlock.y;
 
-        transposeKernel << <dimGrid, dimBlock >> > (this->dev_matrix, y.dev_matrix, this->columns, this->rows);
+        transposeKernel <<<dimGrid, dimBlock >>> (this->dev_matrix, y.dev_matrix, this->columns, this->rows);
 
         cudaError_t error = cudaGetLastError();
         if (error != cudaSuccess) {
