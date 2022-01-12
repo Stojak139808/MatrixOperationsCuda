@@ -36,7 +36,7 @@ __global__ void transposeKernel(float* A, float* y, int width, int height) {
     i_row = blockIdx.x * BLOCK_SIZE + threadIdx.y;
 
     //load tiles into output matrix
-    for (i = 0; i < BLOCK_SIZE; i += BLOCK_SIZE) {
+    for (int i = 0; i < BLOCK_SIZE; i += BLOCK_SIZE) {
         if (i_column < height && (i_row + i) < width) {
             y[(i_row + i) * height + i_column] = tile[threadIdx.x][threadIdx.y + i];
 
