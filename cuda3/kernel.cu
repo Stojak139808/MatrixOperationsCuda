@@ -109,9 +109,63 @@ void multiplte_tests() {
 
 }
 
+__global__ void nullKernel() {
+
+}
+
 int main() {
 
+    nullKernel << <1, 1 >> > ();
+
     //multiplte_tests();
-    single_test();
+    
+    //single_test();
+    
+    using std::chrono::high_resolution_clock;
+    using std::chrono::duration_cast;
+    using std::chrono::duration;
+    using std::chrono::milliseconds;
+
+    for (int i = 1000; i <= 5000; i += 100) {
+        Matrixgpu* A = new Matrixgpu(i, i);
+
+        printf("%d ", i);
+
+        auto t1 = high_resolution_clock::now();
+        (*A)*(*A);
+        auto t2 = high_resolution_clock::now();
+
+        duration<float, std::milli> gpu_time = t2 - t1;
+
+        printf("%f ", gpu_time.count());
+
+        t1 = high_resolution_clock::now();
+        A->transpose();
+        t2 = high_resolution_clock::now();
+
+        gpu_time = t2 - t1;
+
+        printf("%f ", gpu_time.count());
+
+        t1 = high_resolution_clock::now();
+        (*A)+(*A);
+        t2 = high_resolution_clock::now();
+
+        gpu_time = t2 - t1;
+
+        printf("%f ", gpu_time.count());
+
+        t1 = high_resolution_clock::now();
+        (*A)*1;
+        t2 = high_resolution_clock::now();
+
+        gpu_time = t2 - t1;
+
+        printf("%f\n", gpu_time.count());
+
+        delete A;
+
+
+    }
 
 }

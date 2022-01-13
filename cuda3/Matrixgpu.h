@@ -19,7 +19,7 @@ __global__ void fillKernel(float* matrix, float x, const int rows, const int col
 }
 
 __global__ void transposeKernel(float* A, float* y, int width, int height) {
-    __shared__ float tile[BLOCK_SIZE][BLOCK_SIZE + 1]; //padding for avoiding bank conflicts?
+    __shared__ float tile[BLOCK_SIZE][BLOCK_SIZE +1]; //padding for avoiding bank conflicts?
     int i_column = blockIdx.x * BLOCK_SIZE + threadIdx.x;
     int i_row = blockIdx.y * BLOCK_SIZE + threadIdx.y;
 
@@ -163,8 +163,9 @@ public:
         //fills matrix with random values
         srand(time(NULL));
         float* tmp = (float*)malloc(size);
-        for (int i = 0; i < columns; ++i) {
+        for (int i = 0; i < columns*rows; ++i) {
             *(tmp + i) = (float)(rand() % 2000 - 1000) / 100000;
+            printf("%f\n",*(tmp + i));
         }
         cudaMemcpy(this->dev_matrix, tmp, size, cudaMemcpyHostToDevice);
         free(tmp);
