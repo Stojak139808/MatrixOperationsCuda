@@ -165,7 +165,6 @@ public:
         float* tmp = (float*)malloc(size);
         for (int i = 0; i < columns*rows; ++i) {
             *(tmp + i) = (float)(rand() % 2000 - 1000) / 100000;
-            printf("%f\n",*(tmp + i));
         }
         cudaMemcpy(this->dev_matrix, tmp, size, cudaMemcpyHostToDevice);
         free(tmp);
